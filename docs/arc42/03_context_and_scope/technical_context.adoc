@@ -1,0 +1,8 @@
+[[section-technical-context]]
+= Technical Context
+
+**<Diagram or Table>**
+
+**<optionally: Explanation of technical interfaces>**
+
+**<Mapping Input/Output to Channels>**

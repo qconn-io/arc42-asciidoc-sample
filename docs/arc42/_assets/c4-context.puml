@@ -1,0 +1,23 @@
+@startuml c4-context
+!include <C4/C4_Context>
+
+' ----- STYLE (copy from styles/plantuml-style.iuml - do not edit) -----------
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #666666
+skinparam ArrowFontColor #666666
+skinparam wrapWidth 200
+skinparam maxMessageSize 160
+' ----------------------------------------------------------------------------
+
+Person(architect, "Architect", "Writes and maintains the architecture documentation")
+System(docsBuild, "Documentation Build", "Turns AsciiDoc + C4 diagrams into a Confluence page tree")
+System_Ext(confluence, "Confluence", "Hosts the published documentation")
+
+Rel(architect, docsBuild, "commits AsciiDoc + C4 diagrams")
+Rel(docsBuild, confluence, "publishes pages via text2confl")
+
+SHOW_LEGEND()
+@enduml

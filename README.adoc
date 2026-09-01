@@ -1,0 +1,104 @@
+= arc42 example: page-per-section publishing with text2confl
+
+This is the project's official https://arc42.org/[arc42] architecture
+documentation template. It is structured for *page-per-section* publishing
+to Confluence via text2confl, including C4 PlantUML diagrams rendered via
+Kroki, and doubles as the reference example for
+xref:../../doc/adoc/pipeline/pipeline_index.adoc[the publishing pipeline]:
+copy `docs/` into your own project, adjust `.text2confl.yml` and the
+pipeline variables, and you have a working documentation-as-code setup.
+
+== Page hierarchy
+
+text2confl maps the file tree onto the Confluence page tree directly:
+a file `foo.adoc` plus a sibling directory `foo/` makes `foo.adoc` the parent
+page and every `.adoc` file inside `foo/` a child page. No custom splitter
+script is needed.
+
+Applied here:
+
+[source]
+----
+README.adoc            <- this file, NOT part of the --docs root, not published
+docs/                   <- the --docs root passed to text2confl
+  .text2confl.yml
+  arc42.adoc            <- root page, links to all sections
+  arc42/
+    01_introduction_and_goals.adoc   <- child page
+    02_architecture_constraints.adoc <- child page
+    ...
+    12_glossary.adoc                 <- child page
+    _assets/                         <- NOT published (leading "_")
+      c4-context.puml
+      c4-container.puml
+----
+
+Each arc42 section is one file, one page.
+
+NOTE: this README is deliberately kept *outside* `docs/`. text2confl
+publishes every `.adoc`/`.md` file found under `--docs` that doesn't start
+with `_` - a sibling README next to `arc42.adoc` would otherwise become its
+own stray root-level Confluence page.
+
+== Page ordering
+
+Confluence sorts child pages by title, and text2confl has no page-order
+attribute. Ordering is therefore forced with a numeric title prefix matching
+the existing filename numbering, e.g. `= 03. Context and Scope`. This keeps
+the arc42 1-12 order stable in the Confluence sidebar.
+
+== Diagram placement
+
+C4/PlantUML sources live in `_assets/`, next to the sections that own them,
+not as their own pages (the leading underscore excludes them from
+publishing). A section embeds its diagram inline with the file-based macro:
+
+[source,asciidoc]
+----
+plantuml::_assets/c4-context.puml[target=c4-context,format=svg]
+----
+
+Kroki renders it (via `.text2confl.yml`, `fetch: true`) and the resulting SVG
+is attached to and displayed on that section's page - no separate "diagrams"
+page. This mirrors the local IDE preview, which also renders `_assets/*.puml`
+through the same Kroki server (see
+xref:../../doc/adoc/editors/editing_plantuml-hints.adoc[]).
+
+Diagram style: the shared style block is *copied inline* into each `.puml`
+file rather than `!include`d - `!include` of a local style file does not
+resolve reliably through Kroki.
+
+== Config
+
+`.text2confl.yml` configures Kroki diagram rendering: local server, SVG
+format, diagrams fetched as page attachments. Point `asciidoc.kroki.server`
+at your own Kroki instance (or the CI service alias; the pipeline template
+rewrites this automatically, see
+xref:../../doc/adoc/pipeline/pipeline_index.adoc[]).
+
+== Confluence gotcha: shared parent page
+
+text2confl treats every page it finds under `--parent-id` as managed, and by
+default removes anything under that parent it doesn't see in the current run
+(`remove-orphans`, on by default).
+
+Consequence: each doc set must publish under its own dedicated parent page -
+never share a parent page across independent doc sets.
+
+== Try it locally
+
+See `scripts/text2confl-local.ps1` at the repo root for a dry-run/publish
+wrapper around this example (defaults to `--docs` pointing at `docs/` in
+this folder).
+
+== Using this as a template
+
+To start a new documentation set from this example:
+
+. Copy `docs/` into your project (keep the `.text2confl.yml`, `arc42.adoc`,
+  `arc42/` structure).
+. Fill in the arc42 sections; delete guidance you don't need.
+. Point your `.gitlab-ci.yml` at the pipeline template with `DOCS_DIR` set to
+  your copied `docs/` folder - see
+  xref:../../doc/adoc/pipeline/pipeline_index.adoc[Tooling for Pipelines].
+

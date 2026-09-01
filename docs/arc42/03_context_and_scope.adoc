@@ -1,0 +1,6 @@
+[[section-context-and-scope]]
+= 03. Context and Scope
+
+Context and scope delimit the system from its environment and communication
+partners. See the child pages below for the business and technical context
+details.

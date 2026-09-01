@@ -1,0 +1,6 @@
+[[section-business-context]]
+= Business Context
+
+plantuml::../_assets/c4-context.puml[target=c4-context,format=svg]
+
+**<optionally: Explanation of external domain interfaces>**

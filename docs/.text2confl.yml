@@ -1,0 +1,6 @@
+asciidoc:
+  diagrams: Kroki
+  kroki:
+    server: http://host.docker.internal:8000
+    format: svg
+    fetch: true

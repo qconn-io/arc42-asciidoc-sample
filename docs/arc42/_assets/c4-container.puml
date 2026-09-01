@@ -1,0 +1,29 @@
+@startuml c4-container
+!include <C4/C4_Container>
+
+' ----- STYLE (copy from styles/plantuml-style.iuml - do not edit) -----------
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #666666
+skinparam ArrowFontColor #666666
+skinparam wrapWidth 200
+skinparam maxMessageSize 160
+' ----------------------------------------------------------------------------
+
+Person(architect, "Architect", "Writes and maintains the architecture documentation")
+
+System_Boundary(platform, "Documentation Build") {
+  Container(adoc, "AsciiDoc Sources", "arc42 + C4 diagrams", "Structured text describing the architecture")
+  Container(publisher, "text2confl", "CLI / AsciidoctorJ", "Converts AsciiDoc to Confluence Storage Format")
+}
+
+System_Ext(confluence, "Confluence", "Hosts the published page tree")
+
+Rel(architect, adoc, "edits")
+Rel(adoc, publisher, "read by")
+Rel(publisher, confluence, "publishes pages to")
+
+SHOW_LEGEND()
+@enduml

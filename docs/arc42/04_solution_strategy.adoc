@@ -1,0 +1,2 @@
+[[section-solution-strategy]]
+= 04. Solution Strategy
